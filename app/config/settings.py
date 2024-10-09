@@ -1,6 +1,7 @@
 from enum import StrEnum
 import os
 from pathlib import Path
+from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -8,17 +9,18 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class AppEnv(StrEnum):
     LOCAL = "local"
     DEV = "dev"
-    STAGING = "staging"
-    PROD = "prod"
+    STG = "stg"
+    PRD = "prd"
 
+ENV: AppEnv = AppEnv(os.getenv("ENV", "local"))
 
 class Settings(BaseSettings):
+    # --- for FastAPI() settings
+    title: str = "My Greatest FastAPI"
+    docs_url: Optional[str] = None if ENV == AppEnv.PRD else "/docs"
     DEBUG: bool = False
-
-    title: str = "My App"
-
-    ENV: AppEnv = AppEnv(os.getenv("ENV", "local"))
-    LOG_LEVEL: str = "INFO"
+    LOG_LEVEL: str = "DEBUG" if ENV in (AppEnv.LOCAL, AppEnv.DEV) else "INFO"
+    # --- end of FastAPI() settings
 
     DATABASE_HOST: str = ""
     DATABASE_PORT: int = 5432
@@ -26,4 +28,5 @@ class Settings(BaseSettings):
     DATABASE_USER: str = ""
     DATABASE_PASSWORD: str = ""
 
-    model_config = SettingsConfigDict(env_file=Path(__file__) / f"{ENV}.env")
+    # Settings の値を {Env}.env によって上書きする
+    model_config = SettingsConfigDict( env_file=Path(__file__).parent / f"{ENV}.env")
