@@ -1,0 +1,28 @@
+services:
+  api:
+    container_name: my-greatest-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    environment:
+      - ENV=local
+
+  db:
+    image: postgres:17-alpine
+    container_name: my-greatest-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=myrole
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=mydb
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
