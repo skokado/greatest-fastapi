@@ -13,7 +13,7 @@ services:
       - ENV=local
 
   db:
-    image: postgres:17-alpine
+    image: postgres:16.4-alpine # latest v16 on 2024-10-12
     container_name: my-greatest-postgres
     ports:
       - "5432:5432"

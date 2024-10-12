@@ -1,16 +1,13 @@
-from typing import TYPE_CHECKING
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncAttrs
 
 from config import settings
 
-if TYPE_CHECKING:
-    from sqlalchemy.orm.decl_api import DeclarativeMeta
+
+# Base: "DeclarativeMeta" = declarative_base()
+class Base(AsyncAttrs, DeclarativeBase):
+    pass
 
 
-Base: "DeclarativeMeta" = declarative_base()
+# async engine
 engine = create_async_engine(settings.DATABASE_URL, echo=True)
-
-sync_dsn = settings.DATABASE_URL.replace("+asyncpg", "+psycopg")
-sync_engine = create_engine(sync_dsn, echo=True)

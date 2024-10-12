@@ -23,7 +23,11 @@ class User(Base):
     first_name: Mapped[Optional[str]] = mapped_column(String(50))
     last_name: Mapped[Optional[str]] = mapped_column(String(50))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), onupdate=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
 
     # Fields for social OAuth
     oauth_provider: Mapped[Optional[str]] = mapped_column(String(20))

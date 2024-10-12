@@ -16,6 +16,7 @@ config = context.config
 # Override the sqlalchemy.url from settings instead of alembic.ini
 config.set_main_option('sqlalchemy.url', settings.DATABASE_URL)
 
+# Import ORM models to migrate here.
 import auth.models
 
 # Interpret the config file for Python logging.

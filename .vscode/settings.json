@@ -1,0 +1,17 @@
+{
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "cSpell.words": [
+        "asyncpg",
+        "autoflush",
+        "psycopg",
+        "sessionmaker",
+        "sqlalchemy"
+    ],
+    "python.testing.pytestArgs": [
+        "app"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "testing.defaultGutterClickAction": "debug"
+}

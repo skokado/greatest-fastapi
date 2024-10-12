@@ -1,12 +1,12 @@
-from typing import Optional
-from uuid import UUID
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from config.db import Base
 
-from .user import User
+if TYPE_CHECKING:
+    from .user import User
 
 
 class UserProfile(Base):
@@ -16,5 +16,5 @@ class UserProfile(Base):
     bio: Mapped[Optional[str]] = mapped_column(String(500))
     avatar_url: Mapped[Optional[str]] = mapped_column(String(255))
 
-    user: Mapped[User] = relationship(back_populates="profile")
-    user_id: Mapped[int] = mapped_column(ForeignKey(f"{User.__tablename__}.id"), unique=True, nullable=False)
+    user: Mapped["User"] = relationship(back_populates="profile")
+    user_id: Mapped[int] = mapped_column(ForeignKey("auth_users.id"), unique=True, nullable=False)
