@@ -1,9 +1,9 @@
 import os
-from typing import AsyncGenerator, Generator
+from typing import AsyncGenerator
 
 import asyncpg
+from httpx import AsyncClient, ASGITransport
 import pytest
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
     async_sessionmaker,
@@ -57,19 +57,17 @@ async def session() -> AsyncGenerator[AsyncSession, None]:
             class_=AsyncSession,
         )
         async_session = AsyncSessionLocal()
-
-        def test_get_session() -> Generator:
-            try:
-                yield async_session
-            except SQLAlchemyError:
-                pass
-
-        app.dependency_overrides[get_db] = test_get_session
+        app.dependency_overrides[get_db] = lambda: async_session
 
         yield async_session
 
         await async_session.close()
         await conn.rollback()
-        await conn.rollback()
 
     await async_engine.dispose()
+
+
+@pytest.fixture()
+async def client() -> AsyncGenerator[AsyncClient, None]:
+    async with AsyncClient(base_url="http://localhost", transport=ASGITransport(app=app)) as client:
+        yield client

@@ -1,5 +1,16 @@
-from app.auth.tests.factories import UserFactory
+import asyncio
+from app.auth.tests.factories.user_factory import UserFactory
 
-# --- User
-print("# --- Seed User")
-UserFactory.create_batch(10)
+from app.common.dependencies.db import AsyncSessionLocal
+
+async def main():
+    session = AsyncSessionLocal()
+    try:
+        # --- User
+        print("# --- Seed User")
+        await UserFactory.create_batch(session, 10, commit=True)
+    finally:
+        await session.close()
+
+
+asyncio.run(main())

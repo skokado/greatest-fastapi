@@ -1,19 +1,13 @@
-from factory.alchemy import SQLAlchemyModelFactory
 from factory import Faker
 
-from common.dependencies.db import SessionLocal
+from auth.models import User
 
-from ...models import User
-
-fake = Faker("ja")
+from common.factory import BaseFactory
 
 
-class UserFactory(SQLAlchemyModelFactory):
-
+class UserFactory(BaseFactory):
     class Meta:
         model = User
-        sqlalchemy_session_factory = lambda: SessionLocal()
-        sqlalchemy_session_persistence = "commit"
 
     email = Faker("email")
     hashed_password = "hashed_password"
