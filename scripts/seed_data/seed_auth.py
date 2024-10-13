@@ -1,16 +1,11 @@
-import asyncio
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.auth.tests.factories.user_factory import UserFactory
-
-from app.common.dependencies.db import AsyncSessionLocal
-
-async def main():
-    session = AsyncSessionLocal()
-    try:
-        # --- User
-        print("# --- Seed User")
-        await UserFactory.create_batch(session, 10, commit=True)
-    finally:
-        await session.close()
+from app.auth.utils.password import hash_password
 
 
-asyncio.run(main())
+async def main(session: AsyncSession):
+    # --- User
+    print("# --- Seed User")
+    await UserFactory.create(session, email="terutacchi@gmail.com", hashed_password=hash_password("password"))
+    await UserFactory.create_batch(session, 10, commit=True)

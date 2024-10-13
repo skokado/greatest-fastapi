@@ -1,3 +1,4 @@
+import asyncio
 from pathlib import Path
 import sys
 
@@ -9,6 +10,20 @@ sys.path.insert(1, (root_dir / "app").as_posix())
 
 reseed_random(0)
 
+# ruff: noqa: E402
+from app.common.dependencies.db import AsyncSessionLocal
+
+
+async def main():
+    session = AsyncSessionLocal()
+    try:
+        from scripts.seed_data.seed_auth import main as seed_auth
+        await seed_auth(session)
+    except Exception as e:
+        print(e)
+    finally:
+        await session.close()
+
 
 if __name__ == "__main__":
-    from scripts.seed_data import seed_auth
+    asyncio.run(main())
