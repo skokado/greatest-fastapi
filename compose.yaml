@@ -11,6 +11,7 @@ services:
       - ./app:/app
     environment:
       - ENV=local
+      - DATABASE_HOST=db
 
   db:
     image: postgres:16.4-alpine # latest v16 on 2024-10-12
