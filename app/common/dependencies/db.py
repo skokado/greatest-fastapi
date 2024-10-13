@@ -1,5 +1,6 @@
-from typing import AsyncGenerator
+from typing import Annotated, AsyncGenerator
 
+from fastapi import Depends
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
 from config.db import engine
@@ -13,3 +14,6 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             yield async_session
         finally:
             await async_session.close()
+
+
+AsyncSessionDep = Annotated[AsyncSession, Depends(get_db)]

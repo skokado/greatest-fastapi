@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncAttrs
 from config import settings
 
 
-# Base: "DeclarativeMeta" = declarative_base()
 class Base(AsyncAttrs, DeclarativeBase):
     pass
 

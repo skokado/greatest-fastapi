@@ -26,9 +26,12 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     LOG_LEVEL: str = "DEBUG" if ENV in (AppEnv.LOCAL, AppEnv.DEV) else "INFO"
 
-    SECRET_KEY: str = os.environ["SECRET_KEY"]
-    # --- end of FastAPI() settings
+    # --- Secrets
+    SECRET_KEY: str = ""
+    HASH_ALGORITHM: str = "HS512"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 1 week
 
+    # --- Database
     DATABASE_HOST: str = os.environ["DATABASE_HOST"]
     DATABASE_PORT: int = int(os.getenv("DATABASE_PORT", 5432))
     DATABASE_NAME: str = os.environ["DATABASE_NAME"]

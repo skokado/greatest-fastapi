@@ -1,9 +1,7 @@
-from fastapi import FastAPI, Depends
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import FastAPI
 
 from config import settings
-from common.dependencies import get_db
+
 
 app = FastAPI(
     title=settings.title,
@@ -13,14 +11,12 @@ app = FastAPI(
 
 
 @app.get("/")
-def hello():
+def ping():
     return {"message": "it works"}
 
 
-@app.get("/ping")
-async def pong(db: AsyncSession = Depends(get_db)):
-    from auth.models import User
+# Register App routers
+# ruff: noqa: E402
+from auth.routers import router as auth_router
 
-    stmt = select(User).where(User.email == "spongebob@example.com")
-    user = (await db.execute(stmt)).scalar_one_or_none()
-    return {"ping": "pong"}
+app.include_router(auth_router, prefix="/auth")
