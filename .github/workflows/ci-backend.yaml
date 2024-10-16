@@ -17,9 +17,9 @@ env:
 jobs:
   # lint:
 
-  container-job:
+  unittest:
+    name: Unit test
     runs-on: ubuntu-latest
-    container: postgres:16.4-alpine
     services:
       postgres:
         image: postgres:16.4-alpine
@@ -30,10 +30,6 @@ jobs:
           POSTGRES_PASSWORD: mypassword
           POSTGRES_DB: mydb
 
-  unittest:
-    needs: container-job
-    name: Unit test
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
