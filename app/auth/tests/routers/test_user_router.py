@@ -17,5 +17,5 @@ async def test_foo(client: AsyncClient, session: AsyncSession):
     assert user
     assert user.email == "spongebob@example.com"
 
-    response = await client.get("/ping")
+    response = await client.get("/")
     assert response.status_code == 200
