@@ -39,7 +39,7 @@ jobs:
       
       - name: Set up Python and venv
         run: |
-          uv python instal
+          uv python install
           uv sync
       
       - name: Unittest
