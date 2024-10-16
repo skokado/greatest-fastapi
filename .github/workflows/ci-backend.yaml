@@ -1,14 +1,18 @@
 name: CI-backend
 
 on:
+  push:
+    branches: 
+      - main
+
   pull_request:
     branches:
       - main
-    # paths:
-    #   - .python-version
-    #   - pyproject.toml
-    #   - uv.lock
-    #   - app/**/*.py
+    paths:
+      - .python-version
+      - pyproject.toml
+      - uv.lock
+      - app/**/*.py
 
 env:
   ENV: local
