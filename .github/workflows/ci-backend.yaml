@@ -15,7 +15,26 @@ env:
 
 
 jobs:
-  # lint:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install the project
+        run: uv sync --all-extras --dev
+      
+      - name: Lint
+        run: uv run ruff format --check --diff app/
 
   unittest:
     name: Unit test
@@ -36,11 +55,14 @@ jobs:
       
       - name: Install uv
         uses: astral-sh/setup-uv@v3
-      
-      - name: Set up Python and venv
-        run: |
-          uv python install
-          uv sync
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install the project
+        run: uv sync --all-extras --dev
       
       - name: Unittest
         run: uv run pytest app/
