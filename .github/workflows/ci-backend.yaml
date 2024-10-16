@@ -43,4 +43,4 @@ jobs:
           uv sync
       
       - name: Unittest
-        run: pytest
+        run: uv run pytest
