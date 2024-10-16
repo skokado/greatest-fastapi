@@ -1,0 +1,50 @@
+name: CI-backend
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .python-version
+      - pyproject.toml
+      - uv.lock
+      - app/**/*.py
+
+env:
+  ENV: local
+
+
+jobs:
+  # lint:
+
+  container-job:
+    runs-on: ubuntu-latest
+    container: postgres:16.4-alpine
+    services:
+      postgres:
+        image: postgres:16.4-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: myrole
+          POSTGRES_PASSWORD: mypassword
+          POSTGRES_DB: mydb
+
+  unittest:
+    needs: container-job
+    name: Unit test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+      
+      - name: Set up Python and venv
+        run: |
+          uv python instal
+          uv sync
+      
+      - name: Unittest
+        run: pytest
