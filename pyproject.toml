@@ -60,7 +60,6 @@ exclude = [
     "site-packages",
     "migrations",
     "scripts",
-    "settings.py",
     "tests",
 ]
 line-length = 100
