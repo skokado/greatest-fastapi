@@ -8,6 +8,7 @@
         "autoflush",
         "fastapi",
         "httpx",
+        "JWKS",
         "psycopg",
         "sessionmaker",
         "sqlalchemy",
