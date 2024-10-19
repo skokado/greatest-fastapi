@@ -10,6 +10,7 @@ dependencies = [
     "fastapi>=0.115.0",
     "freezegun>=1.5.1",
     "httpx>=0.27.2",
+    "itsdangerous>=2.2.0",
     "passlib>=1.7.4",
     "psycopg[binary,pool]>=3.2.3",
     "pydantic-settings>=2.5.2",
@@ -60,7 +61,6 @@ exclude = [
     "site-packages",
     "migrations",
     "scripts",
-    "settings.py",
     "tests",
 ]
 line-length = 100

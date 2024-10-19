@@ -15,6 +15,7 @@
             ],
             "jinja": true,
             "cwd": "${workspaceFolder}/app",
+            "justMyCode": false
         }
     ]
 }
