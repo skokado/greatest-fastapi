@@ -3,10 +3,13 @@ from typing import Optional
 from authlib.integrations.starlette_client import OAuth, StarletteOAuth2App
 from fastapi import status, APIRouter, Query, Request, Response
 from fastapi.responses import RedirectResponse
-import jwt
+from sqlalchemy import select
 
 from config import settings
+from common.dependencies import AsyncSessionDep
 
+from ..models import Auth0User
+from ..types.auth0 import Auth0AccessTokenResponse
 from ..utils.strings import generate_oauth2_state
 
 
@@ -43,7 +46,10 @@ async def oauth2_login(request: Request):
 
 @router.get("/callback")
 async def oauth2_callback(
-    request: Request, state: Optional[str] = Query(), error: Optional[str] = Query(None)
+    request: Request,
+    db: AsyncSessionDep,
+    state: Optional[str] = Query(),
+    error: Optional[str] = Query(None),
 ):
     """Send request to Auth0 to generate access token"""
     if error:
@@ -54,7 +60,24 @@ async def oauth2_callback(
     except AssertionError:
         return Response("Invalid state", status_code=status.HTTP_400_BAD_REQUEST)
 
-    response = await auth0.authorize_access_token(request)
-    user_info = response["userinfo"]
-    id_token_decoded = jwt.decode(response["id_token"], options={"verify_signature": False})
-    return {"it": "works!"}
+    token_response: Auth0AccessTokenResponse = await auth0.authorize_access_token(request)
+    response = {
+        "access_token": token_response["access_token"],
+        "token_type": token_response["token_type"],
+    }
+    # Select or create Auth0User
+    sub = token_response["userinfo"]["sub"]
+    stmt = select(Auth0User).where(Auth0User.sub == sub)
+    result = (await db.execute(stmt)).scalar_one_or_none()
+
+    if result:
+        return response
+
+    user = Auth0User(
+        sub=sub,
+        email=token_response["userinfo"].get("email"),
+        nickname=token_response["userinfo"].get("nickname"),
+    )
+    db.add(user)
+    await db.commit()
+    return response

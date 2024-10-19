@@ -1,12 +1,17 @@
 {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "charliermarsh.ruff",
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "charliermarsh.ruff",
+    },
     "cSpell.words": [
         "asyncpg",
         "autoflush",
+        "fastapi",
+        "httpx",
         "psycopg",
         "sessionmaker",
-        "sqlalchemy"
+        "sqlalchemy",
+        "starlette"
     ],
     "python.testing.pytestArgs": [
         "app"
