@@ -17,10 +17,12 @@ from ..utils.strings import generate_oauth2_state
 oauth = OAuth()
 oauth.register(
     name="auth0",
-    audience=settings.AUTH0_AUDIENCE,
     client_id=settings.AUTH0_CLIENT_ID,
     client_secret=settings.AUTH0_CLIENT_SECRET,
-    authorize_prompt=None,
+    authorize_params={
+        "audience": settings.AUTH0_AUDIENCE,
+        "grant_type": "client_credentials",
+    },
     authorize_url=f"https://{settings.AUTH0_DOMAIN}/authorize",
     authorize_token_url=f"https://{settings.AUTH0_DOMAIN}/authorize",
     token_endpoint=f"https://{settings.AUTH0_DOMAIN}/oauth/token",
@@ -63,6 +65,7 @@ async def oauth2_callback(
     token_response: Auth0AccessTokenResponse = await auth0.authorize_access_token(request)
     response = {
         "access_token": token_response["access_token"],
+        "id_token": token_response["id_token"],
         "token_type": token_response["token_type"],
     }
     # Select or create Auth0User
