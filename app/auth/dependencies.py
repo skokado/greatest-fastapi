@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import HTTPException, Depends
 from fastapi import status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, OAuth2PasswordBearer
 import jwt
 
 from config import settings
@@ -46,3 +46,5 @@ async def get_current_user(
 
 
 CurrentUserDep = Annotated[User, Depends(get_current_user)]
+
+BearerCredential = Annotated[HTTPAuthorizationCredentials, Depends(HTTPBearer())]

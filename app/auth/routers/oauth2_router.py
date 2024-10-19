@@ -1,13 +1,15 @@
 from typing import Optional
 
 from authlib.integrations.starlette_client import OAuth, StarletteOAuth2App
-from fastapi import status, APIRouter, Query, Request, Response
+from fastapi import HTTPException, status, APIRouter, Query, Request, Response
 from fastapi.responses import RedirectResponse
+import jwt
 from sqlalchemy import select
 
 from config import settings
 from common.dependencies import AsyncSessionDep
 
+from ..dependencies import BearerCredential
 from ..models import Auth0User
 from ..types.auth0 import Auth0AccessTokenResponse
 from ..utils.strings import generate_oauth2_state
@@ -27,10 +29,9 @@ oauth.register(
     authorize_token_url=f"https://{settings.AUTH0_DOMAIN}/authorize",
     token_endpoint=f"https://{settings.AUTH0_DOMAIN}/oauth/token",
     client_kwargs={"scope": "openid profile email"},
-    jwks_uri=f"https://{settings.AUTH0_DOMAIN}/.well-known/jwks.json",
+    jwks_uri=settings.AUTH0_JWKS_URI,
 )
 auth0: StarletteOAuth2App = oauth.auth0
-
 
 router = APIRouter()
 
@@ -84,3 +85,26 @@ async def oauth2_callback(
     db.add(user)
     await db.commit()
     return response
+
+
+@router.get("/me")
+async def oauth2_me(bearer: BearerCredential, db: AsyncSessionDep):
+    token = bearer.credentials
+    jwks_client = jwt.PyJWKClient(uri=settings.AUTH0_JWKS_URI)
+    signing_key = jwks_client.get_signing_key_from_jwt(token)
+    try:
+        decoded = jwt.decode(
+            token,
+            signing_key,
+            audience=settings.AUTH0_AUDIENCE,
+            algorithms=["RS256"],
+        )
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized")
+
+    stmt = select(Auth0User).where(Auth0User.sub == decoded["sub"])
+    user = (await db.execute(stmt)).scalar_one_or_none()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="unauthorized")
+
+    return {"Hello": f"{user.nickname or user.sub}!"}

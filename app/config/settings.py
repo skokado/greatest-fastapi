@@ -54,6 +54,7 @@ class Settings(BaseSettings):
     AUTH0_ALGORITHMS: list[str] = ["RS256"]
     AUTH0_CALLBACK_URL: str = ""
     AUTH0_AUDIENCE: str = os.getenv("AUTH0_AUDIENCE", "")
+    AUTH0_JWKS_URI: str = f"https://{AUTH0_DOMAIN}/.well-known/jwks.json"
 
     # Settings の値を {Env}.env によって上書きする
     model_config = SettingsConfigDict(env_file=Path(__file__).parent / f"{ENV}.env")
